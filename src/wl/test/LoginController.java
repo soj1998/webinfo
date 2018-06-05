@@ -14,7 +14,7 @@ public class LoginController {
 	@RequestMapping("/ceshi")
 	public void rwts(HttpServletRequest request,HttpServletResponse response) throws Exception{
         GankTest gn=new GankTest();
-        gn.test2();
+        gn.test1();
 	}
 	
 }
