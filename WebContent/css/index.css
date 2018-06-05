@@ -1,0 +1,10 @@
+#loading {
+	background:url(../img/loading.gif) no-repeat 20px center;
+	line-height:10px;
+	font-size:16px;
+	font-weight:bold;
+	text-indent:35px;
+	color:#666;
+	margin-top:12px;
+}
+
