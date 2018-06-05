@@ -1,7 +1,7 @@
 var reJson;
 $(function () {
     $('#anniu').click(function(e){
-    	alert("1");
+    	getJson(null,"test/ceshi");
     });
     
 });
