@@ -55,7 +55,7 @@ public class GankTest {
 		    .subscribe(new Consumer<ResponseBody>() {
 		        @Override
 		        public void accept(ResponseBody body) throws Exception {
-		        	Document document=Jsoup.parse(body.string());
+		        	Document document=Jsoup.parse(body.string(),"https://book.qidian.com/info/1006141474#Catalog");
 		        	String fictionName = document.select("h1>em").text();
 		        	System.out.println("ะกหตร๛ณฦ"+fictionName);
 		        	Elements results = document.select("a[data-cid]");
