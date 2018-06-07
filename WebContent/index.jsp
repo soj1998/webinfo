@@ -32,7 +32,8 @@
 <div class="container">
 	<div class="row clearfix">
 		<div class="col-md-6 column">
-			 <button id="anniu" type="button" class="btn btn-default">按钮</button> 
+			 <button id="anniu" type="button" class="btn btn-default">按钮</button>
+			 <button id="anniu2" type="button" class="btn btn-default">craw按钮</button> 
 		</div>
 		<div class="col-md-6 column">
 		</div>

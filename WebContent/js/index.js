@@ -3,7 +3,9 @@ $(function () {
     $('#anniu').click(function(e){
     	getJson(null,"test/ceshi");
     });
-    
+    $('#anniu2').click(function(e){
+    	getJson(null,"test/ceshi2");
+    });
 });
 
 
