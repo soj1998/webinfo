@@ -22,6 +22,6 @@ public class LoginController {
 	@RequestMapping("/ceshi2")
 	public void rwts2(HttpServletRequest request,HttpServletResponse response) throws Exception{
         CrawTest gn=new CrawTest();
-        gn.test();
+        gn.test4();
 	}
 }
