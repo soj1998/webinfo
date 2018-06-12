@@ -210,7 +210,9 @@ public class GankTest {
 			public String apply(ResponseBody body) throws Exception {
 				Document doc = Jsoup.parse(body.string(),url);
 				title = doc.title();
-				text = doc.select("#content").text();
+				text = doc.select("#content p").toString();
+				text = text.replace("<p>","  ");
+				text = text.replace("</p>","\n\r");
 				Elements nextdiv = doc.select(".bottem2");
 				String next = nextdiv.toString();
 				String[] nexturl = next.split("обр╩уб");

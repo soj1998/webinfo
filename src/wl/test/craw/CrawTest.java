@@ -100,7 +100,7 @@ public class CrawTest {
          * 设置请求的频率
          * 每1000毫秒，也就是两次请求的间隔至少是1秒
          */
-        config.setPolitenessDelay(1000);
+        config.setPolitenessDelay(10000);
  
         /*
          * 设置请求的网页的深度（后面专门会讲）  设置2 为两层
@@ -149,15 +149,17 @@ public class CrawTest {
  
         /*
          * 配置爬虫种子页面，就是规定的从哪里开始爬，可以配置多个种子页面
-         */
-        controller.addSeed("http://www.java1234.com/");
-        controller.addSeed("http://www.java1234.com/a/kaiyuan/");
-        controller.addSeed("http://www.java1234.com/a/bysj/");
- 
+         * http://www.chinatax.gov.cn/n810341/n810755/index.html
+         
+        * controller.addSeed("http://www.java1234.com/");
+        * controller.addSeed("http://www.java1234.com/a/kaiyuan/");
+        * controller.addSeed("http://www.java1234.com/a/bysj/");
+        */
+        controller.addSeed("http://www.chinatax.gov.cn/n810341/n810755/index.html");
         /*
          * 启动爬虫，爬虫从此刻开始执行爬虫任务，根据以上配置
          */
-        controller.start(BasicCrawler.class, numberOfCrawlers);
+        controller.start(new PostgresCrawlerFactory(), numberOfCrawlers);
       
 	}
 	

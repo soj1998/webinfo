@@ -92,6 +92,7 @@ public class LocalDataCollectorCrawler extends WebCrawler {
    */
   public void dumpMyData() {
     int id = getMyId();
+    
     logger.debug("当前爬虫实例id:"+id);
     System.out.println("当前爬虫实例id:"+id);
     System.out.println("总处理页面："+myCrawlStat.getTotalProcessedPages());
