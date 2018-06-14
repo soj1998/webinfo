@@ -3,19 +3,25 @@ package wl.test.craw;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
-
+import okhttp3.ResponseBody;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
-
+import retrofit2.http.GET;
+import retrofit2.http.Url;
+import com.google.common.base.Strings;
 import com.wl.runzekeji.data.local.sqldata.JdbcUtils;
 import com.wl.runzekeji.util.DateUtil;
 import com.wl.runzekeji.util.StringRegUtils;
-
-import java.io.IOException;
+import com.wl.runzekeji.util.http.RetrofitServiceManager;
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+
 
 public class PostgresDBServiceImpl implements PostgresDBService {
 
@@ -49,19 +55,36 @@ public class PostgresDBServiceImpl implements PostgresDBService {
 
 	@Override
 	public void store2(Page webPage) {
-		boolean sf=webPage.getWebURL().getURL().endsWith("n810755/index.html");
-		if (!sf&&webPage.getParseData() instanceof HtmlParseData) {
-            try {
-                HtmlParseData htmlParseData = (HtmlParseData) webPage.getParseData();
-                String sql="insert into test2 (biaoti,wenhao,shijian,content,text,html,time,url,furl) values (?,?,?,?,?,?,?,?,?)";
-                Document doc=null;
-				try {
-					doc = Jsoup.connect(webPage.getWebURL().getURL()).get();
-				} catch (IOException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
-                Elements e=doc.select(".sv_textcon li");
+		boolean sf1=webPage.getWebURL().getURL().endsWith("/content.html");
+		boolean sf2=false;
+		if(!Strings.isNullOrEmpty(webPage.getWebURL().getParentUrl())){
+			sf2=webPage.getWebURL().getParentUrl().endsWith("n810755/index.html");
+		}
+		boolean sf3=webPage.getWebURL().getURL().startsWith("http://www.chinatax.gov.cn/n810341/n810755");;
+		if (sf1&&sf2&&sf3&&webPage.getParseData() instanceof HtmlParseData) {
+			saveRetrofit(webPage.getWebURL().getURL(),webPage.getWebURL().getParentUrl());
+        }
+		
+	}
+	
+	private void saveRetrofit(String url,String parentUrl){
+		TestService ts=RetrofitServiceManager.getInstance().create(TestService.class);
+  		ts.getBody(url)
+		.map(new Function<ResponseBody, Document>() {
+			@Override
+			public Document apply(ResponseBody body) throws Exception {
+				Document doc = Jsoup.parse(body.string(),url);
+				
+				return doc;
+			}
+		})
+		.subscribeOn(Schedulers.io())
+		.observeOn(Schedulers.io())
+		.subscribe(new Consumer<Document>() {
+			@Override
+			public void accept(Document doc) throws Exception {
+				String sql="insert into test2 (biaoti,wenhao,shijian,content,text,html,time,url,furl) values (?,?,?,?,?,?,?,?,?)";
+				Elements e=doc.select(".sv_textcon li");
                 String biaoti=null;
                 String wenhao=null;
                 if(e.size()>2){
@@ -77,24 +100,36 @@ public class PostgresDBServiceImpl implements PostgresDBService {
                 t=t.replace("Äê", "-");
                 t=t.replace("ÔÂ", "-");
                 t=t.replace("ÈÕ", "");
-                System.out.println(t);
                 try {
 					params[2] = DateUtil.formatDateInSql(t, "yyyy-mm-dd");
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
                 params[3] = doc.select("#tax_content").text();
-                params[4] = htmlParseData.getText();
-                params[5] = htmlParseData.getHtml();
+                params[4] = doc.text();
+                params[5] = doc.html();
                 params[6] = new Timestamp(new java.util.Date().getTime());
-                params[7] = webPage.getWebURL().getURL();
-                params[8] = webPage.getWebURL().getParentUrl();
+                params[7] = url;
+                params[8] = parentUrl;
                 JdbcUtils.update(sql, params);
-            } catch (SQLException e) {
-                logger.error("SQL Exception while storing webpage for url'{}'", webPage.getWebURL().getURL(), e);
-                throw new RuntimeException(e);
-            }
-        }
-		
+			}
+		}, new Consumer<Throwable>() {
+			@Override
+			public void accept(Throwable throwable) throws Exception {
+				System.out.println(throwable);
+			}
+		});
 	}
+	
+	public interface TestService{
+        /**
+         *
+         * @param url
+         * @param
+         * @param
+         * @return
+         */
+        @GET
+        Observable<ResponseBody> getBody(@Url String url/*, @Path("count")int count,@Path("page")int page*/);
+    }
 }

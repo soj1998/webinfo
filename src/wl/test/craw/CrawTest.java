@@ -13,7 +13,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class CrawTest {
 	private String rootFolder = "E:/crawl"; // 定义爬虫数据存储位置
-    private int numberOfCrawlers = 7;
+    private int numberOfCrawlers = 1;
 	public void test() {
 		try {
 			begincrawler();
@@ -100,7 +100,7 @@ public class CrawTest {
          * 设置请求的频率
          * 每1000毫秒，也就是两次请求的间隔至少是1秒
          */
-        config.setPolitenessDelay(10000);
+        config.setPolitenessDelay(20000);
  
         /*
          * 设置请求的网页的深度（后面专门会讲）  设置2 为两层
